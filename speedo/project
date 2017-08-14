@@ -1,0 +1,3 @@
+schematics speedo/power.sch speedo/cpu.sch speedo/airp.sch
+output-name speedo/speedo
+elements-dir /home/ggreen/src/avhardware/hardware/pcb-elements
