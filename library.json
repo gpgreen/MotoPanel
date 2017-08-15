@@ -1,0 +1,18 @@
+{
+"name": "MotoPanel",
+"frameworks": "Arduino",
+"keywords": "lcd",
+"description": "Display values on LCD for motorcycle gauge",
+"url": "http://www.pjrc.com/teensy/td_libs_FreqCount.html",
+"downloadUrl": "http://www.pjrc.com/teensy/arduino_libraries/FreqCount.zip",
+"authors":
+{
+        "name": "Greg Green",
+        "maintainer": true
+},
+"repository":
+{
+    "type": "git",
+    "url": "https://github.com/PaulStoffregen/FreqCount"
+}
+}
