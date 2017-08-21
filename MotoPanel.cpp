@@ -19,8 +19,9 @@ const int WHITE=0;
 
 // The constructor
 MotoPanel::MotoPanel(Adafruit_GFX& display)
-    : _display(display), _last_speed(-1), _last_mileage(-1),
-      _last_rpm(0), _rpm_range(10), _update_display(false)
+    : _display(display), _mode(NORMAL),
+      _last_speed(-1), _last_mileage(-1), _last_rpm(0), _last_volt(0.0f),
+      _rpm_range(10),  _update_display(false)
 {
     // does nothing more
 }
@@ -30,45 +31,60 @@ void MotoPanel::begin(int rpm_range)
     _rpm_range = rpm_range;
 }
 
-bool MotoPanel::update()
+bool MotoPanel::loopUpdate()
 {
-    bool retval = _update_display;
-    _update_display = false;
-    return retval;
+    if (_update_display) {
+	_display.fillRect(0, 0, 83, 47, WHITE);
+	switch (_mode) {
+	case NORMAL:
+	    drawSpeed();
+	    drawRPM();
+	    drawMileage();
+	    break;
+	case SECONDARY:
+	    drawVoltage();
+	    break;
+	};
+	_update_display = false;
+	return true;
+    }
+    return false;
 }
 
-void MotoPanel::drawSpeed(int spd)
+void MotoPanel::setSpeed(int spd)
 {
     if (spd == _last_speed)
 	return;
     _last_speed = spd;
-
-    // blank speed
-    _display.fillRect(24, 10, 5*2*4, 10*4, WHITE);
-  
-    _display.setTextSize(4);
-    _display.setTextColor(BLACK);
-    _display.setCursor(24, 10);
-    _display.print(spd, DEC);
-
-    _update_display = true;
+    if (_mode == NORMAL)
+	_update_display = true;
 }
 
-void MotoPanel::drawMileage(int mileage)
+void MotoPanel::drawSpeed()
+{
+    _display.setCursor(24, 10);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(4);
+    _display.print(_last_speed, DEC);
+}
+
+void MotoPanel::setMileage(int mileage)
 {
     if (_last_mileage == mileage)
 	return;
     _last_mileage = mileage;
+    if (_mode == NORMAL)
+	_update_display = true;
+}
 
-    // blank mileage
-    _display.fillRect(24, 40, 5*8, 10, WHITE);
-
-    _display.setTextSize(1);
-    _display.setTextColor(BLACK);
+void MotoPanel::drawMileage()
+{
     _display.setCursor(24, 40);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
 
-    int x = mileage;
-    int digit = mileage / 1000000;
+    int x = _last_mileage;
+    int digit = _last_mileage / 1000000;
     x -= digit * 1000000;
     _display.print(digit, DEC);
     digit = x / 100000;
@@ -88,33 +104,60 @@ void MotoPanel::drawMileage(int mileage)
     _display.print(digit, DEC);
     _display.print(".");
     _display.print(x, DEC);
-
-    _update_display = true;
 }
 
-void MotoPanel::drawRPM(int rpm)
+void MotoPanel::setRPM(int rpm)
 {
     if (_last_rpm == rpm)
 	return;
     _last_rpm = rpm;
+    if (_mode == NORMAL)
+	_update_display = true;
+}
 
-    // blank rpm
-    _display.fillRect(0, 12, 10, 47, WHITE);
-    _display.fillRect(1, 1, 5*6, 10, WHITE);
-  
-    int delta = rpm / (_rpm_range/(47 - 12));
+void MotoPanel::drawRPM()
+{
+    int delta = _last_rpm / (_rpm_range/(47 - 12));
     int triy = 47 - delta;
-    int trix = rpm / (_rpm_range/10);
+    int trix = _last_rpm / (_rpm_range/10);
     _display.fillTriangle(0, 47, 0, triy, trix, triy, BLACK);
     _display.drawLine(0, triy, 0, 12, BLACK);
     _display.drawLine(0, 12, 10, 12, BLACK);
     _display.drawLine(10, 12, trix, triy, BLACK); 
   
-    _display.setTextSize(1);
-    _display.setTextColor(BLACK);
     _display.setCursor(1, 1);
-    _display.print(rpm, DEC);
-
-    _update_display = true;
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
+    _display.print(_last_rpm, DEC);
 }
 
+void MotoPanel::setVoltage(float v)
+{
+    if (v == _last_volt)
+	return;
+    _last_volt = v;
+    if (_mode == SECONDARY)
+	_update_display = true;
+}
+
+void MotoPanel::drawVoltage()
+{
+    _display.setCursor(2, 10);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
+    _display.print("V:");
+    _display.print(_last_volt, 1);
+}
+
+void MotoPanel::buttonPressed()
+{
+    // switch mode
+    if (_mode == NORMAL) {
+	_mode = SECONDARY;
+    }
+    else {
+	_mode = NORMAL;
+    }
+    // flag for redrawing
+    _update_display = true;
+}
