@@ -13,9 +13,7 @@
 #endif
 
 #include "MotoPanel.h"
-
-const int BLACK=1;
-const int WHITE=0;
+#include <Adafruit_PCD8544.h>
 
 // The constructor
 MotoPanel::MotoPanel(Adafruit_GFX& display)
@@ -26,15 +24,16 @@ MotoPanel::MotoPanel(Adafruit_GFX& display)
     // does nothing more
 }
 
-void MotoPanel::begin(int rpm_range)
+void MotoPanel::begin(int rpm_range, int start_mileage)
 {
     _rpm_range = rpm_range;
+    _last_mileage = start_mileage;
 }
 
 bool MotoPanel::loopUpdate()
 {
     if (_update_display) {
-	_display.fillRect(0, 0, 83, 47, WHITE);
+	_display.fillRect(0, 0, LCDWIDTH, LCDHEIGHT, WHITE);
 	switch (_mode) {
 	case NORMAL:
 	    drawSpeed();

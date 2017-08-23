@@ -19,7 +19,7 @@ public:
     explicit MotoPanel(Adafruit_GFX& display);
 
     // initialize all state
-    void begin(int rpm_range);
+    void begin(int rpm_range, int start_mileage);
 
     // send values to panel to draw
     void setSpeed(int spd);
