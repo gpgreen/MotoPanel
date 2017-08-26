@@ -18,7 +18,8 @@
 // The constructor
 MotoPanel::MotoPanel(Adafruit_GFX& display)
     : _display(display), _mode(NORMAL),
-      _last_speed(-1), _last_mileage(-1), _last_rpm(0), _last_volt(0.0f),
+      _last_speed(-1), _last_mileage(-1), _trip1_mileage(-1), _trip2_mileage(-1),
+      _last_rpm(0), _last_volt(0.0f),
       _rpm_range(10),  _update_display(false)
 {
     // does nothing more
@@ -42,6 +43,8 @@ bool MotoPanel::loopUpdate()
 	    break;
 	case SECONDARY:
 	    drawVoltage();
+	    drawTrip1Mileage();
+	    drawTrip2Mileage();
 	    break;
 	};
 	_update_display = false;
@@ -76,33 +79,66 @@ void MotoPanel::setMileage(int mileage)
 	_update_display = true;
 }
 
+void MotoPanel::setTrip1Mileage(int mileage)
+{
+    if (_trip1_mileage == mileage)
+	return;
+    _trip1_mileage = mileage;
+    if (_mode == SECONDARY)
+	_update_display = true;
+}
+
+void MotoPanel::setTrip2Mileage(int mileage)
+{
+    if (_trip2_mileage == mileage)
+	return;
+    _trip2_mileage = mileage;
+    if (_mode == SECONDARY)
+	_update_display = true;
+}
+
+void MotoPanel::drawMileageCore(int mileage, int len)
+{
+    int tens = 1;
+    for (int i=0; i<len; ++i)
+	tens *= 10;
+
+    int m = mileage;
+    int digit;
+    for (int i=0; i<len; ++i) {
+	digit = m / tens;
+	m -= digit * tens;
+	_display.print(digit, DEC);
+	tens /= 10;
+    }
+    _display.print(".");
+    _display.print(m, DEC);
+}
+
 void MotoPanel::drawMileage()
 {
     _display.setCursor(24, 40);
     _display.setTextColor(BLACK);
     _display.setTextSize(1);
+    drawMileageCore(_last_mileage, 6);
+}
 
-    int x = _last_mileage;
-    int digit = _last_mileage / 1000000;
-    x -= digit * 1000000;
-    _display.print(digit, DEC);
-    digit = x / 100000;
-    x -= digit * 100000;
-    _display.print(digit, DEC);
-    digit = x / 10000;
-    x -= digit * 10000;
-    _display.print(digit, DEC);
-    digit = x / 1000;
-    x -= digit * 1000;
-    _display.print(digit, DEC);
-    digit = x / 100;
-    x -= digit * 100;
-    _display.print(digit, DEC);
-    digit = x / 10;
-    x -= digit * 10;
-    _display.print(digit, DEC);
-    _display.print(".");
-    _display.print(x, DEC);
+void MotoPanel::drawTrip1Mileage()
+{
+    _display.setCursor(2, 20);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
+    _display.print("T1:");
+    drawMileageCore(_trip1_mileage, 5);
+}
+
+void MotoPanel::drawTrip2Mileage()
+{
+    _display.setCursor(2, 30);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
+    _display.print("T2:");
+    drawMileageCore(_trip2_mileage, 5);
 }
 
 void MotoPanel::setRPM(int rpm)
@@ -144,19 +180,14 @@ void MotoPanel::drawVoltage()
     _display.setCursor(2, 10);
     _display.setTextColor(BLACK);
     _display.setTextSize(1);
-    _display.print("V:");
+    _display.print(" V:");
     _display.print(_last_volt, 1);
 }
 
 void MotoPanel::buttonPressed()
 {
     // switch mode
-    if (_mode == NORMAL) {
-	_mode = SECONDARY;
-    }
-    else {
-	_mode = NORMAL;
-    }
+    _mode = (_mode == NORMAL) ? SECONDARY : NORMAL;
     // flag for redrawing
     _update_display = true;
 }
