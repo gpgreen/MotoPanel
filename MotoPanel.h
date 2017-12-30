@@ -35,6 +35,9 @@ public:
 
     // called when the button is pressed and released
     void buttonPressed();
+
+    // called when the button is long-pressed and released
+    void buttonLongPressed();
     
 private:
     void drawSpeed();

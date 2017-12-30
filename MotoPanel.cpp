@@ -191,3 +191,8 @@ void MotoPanel::buttonPressed()
     // flag for redrawing
     _update_display = true;
 }
+
+void MotoPanel::buttonLongPressed()
+{
+    buttonPressed();
+}
