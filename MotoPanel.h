@@ -28,6 +28,7 @@ public:
     void setTrip2Mileage(unsigned long mileage);
     void setRPM(int rpm);
     void setVoltage(float v);
+    void setTemp(float v);
     
     // called once each loop
     // returns true if panel needs a display update, false if not
@@ -47,7 +48,8 @@ private:
     void drawTrip2Mileage();
     void drawRPM();
     void drawVoltage();
-
+    void drawTemp();
+    
     Adafruit_GFX& _display;
     Mode _mode;
     int _last_speed;
@@ -56,6 +58,7 @@ private:
     unsigned long _trip2_mileage;
     int _last_rpm;
     float _last_volt;
+    float _last_temp;
     int _rpm_range;
     bool _update_display;
 };

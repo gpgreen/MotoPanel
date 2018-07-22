@@ -19,7 +19,7 @@
 MotoPanel::MotoPanel(Adafruit_GFX& display)
     : _display(display), _mode(NORMAL),
       _last_speed(0), _last_mileage(0L), _trip1_mileage(0L), _trip2_mileage(0L),
-      _last_rpm(0), _last_volt(0.0f),
+      _last_rpm(0), _last_volt(0.0f), _last_temp(0.0f),
       _rpm_range(10),  _update_display(false)
 {
     // does nothing more
@@ -43,6 +43,7 @@ bool MotoPanel::loopUpdate()
             break;
         case SECONDARY:
             drawVoltage();
+            drawTemp();
             drawTrip1Mileage();
             drawTrip2Mileage();
             break;
@@ -125,19 +126,19 @@ void MotoPanel::drawMileage()
 
 void MotoPanel::drawTrip1Mileage()
 {
-    _display.setCursor(2, 20);
+    _display.setCursor(2, 30);
     _display.setTextColor(BLACK);
     _display.setTextSize(1);
-    _display.print("T1:");
+    _display.print("  T1:");
     drawMileageCore(_trip1_mileage, 5);
 }
 
 void MotoPanel::drawTrip2Mileage()
 {
-    _display.setCursor(2, 30);
+    _display.setCursor(2, 40);
     _display.setTextColor(BLACK);
     _display.setTextSize(1);
-    _display.print("T2:");
+    _display.print("  T2:");
     drawMileageCore(_trip2_mileage, 5);
 }
 
@@ -180,8 +181,26 @@ void MotoPanel::drawVoltage()
     _display.setCursor(2, 10);
     _display.setTextColor(BLACK);
     _display.setTextSize(1);
-    _display.print(" V:");
+    _display.print("   V:");
     _display.print(_last_volt, 1);
+}
+
+void MotoPanel::setTemp(float t)
+{
+    if (t == _last_temp)
+        return;
+    _last_temp = t;
+    if (_mode == SECONDARY)
+        _update_display = true;
+}
+
+void MotoPanel::drawTemp()
+{
+    _display.setCursor(2, 20);
+    _display.setTextColor(BLACK);
+    _display.setTextSize(1);
+    _display.print("Temp:");
+    _display.print(_last_temp, 1);
 }
 
 void MotoPanel::buttonPressed()
