@@ -18,14 +18,14 @@
 // The constructor
 MotoPanel::MotoPanel(Adafruit_GFX& display)
     : _display(display), _mode(NORMAL),
-      _last_speed(-1), _last_mileage(-1), _trip1_mileage(-1), _trip2_mileage(-1),
+      _last_speed(0), _last_mileage(0L), _trip1_mileage(0L), _trip2_mileage(0L),
       _last_rpm(0), _last_volt(0.0f),
       _rpm_range(10),  _update_display(false)
 {
     // does nothing more
 }
 
-void MotoPanel::begin(int rpm_range, int start_mileage)
+void MotoPanel::begin(int rpm_range, unsigned long start_mileage)
 {
     _rpm_range = rpm_range;
     _last_mileage = start_mileage;
@@ -34,21 +34,21 @@ void MotoPanel::begin(int rpm_range, int start_mileage)
 bool MotoPanel::loopUpdate()
 {
     if (_update_display) {
-	_display.fillRect(0, 0, LCDWIDTH, LCDHEIGHT, WHITE);
-	switch (_mode) {
-	case NORMAL:
-	    drawSpeed();
-	    drawRPM();
-	    drawMileage();
-	    break;
-	case SECONDARY:
-	    drawVoltage();
-	    drawTrip1Mileage();
-	    drawTrip2Mileage();
-	    break;
-	};
-	_update_display = false;
-	return true;
+        _display.fillRect(0, 0, LCDWIDTH, LCDHEIGHT, WHITE);
+        switch (_mode) {
+        case NORMAL:
+            drawSpeed();
+            drawRPM();
+            drawMileage();
+            break;
+        case SECONDARY:
+            drawVoltage();
+            drawTrip1Mileage();
+            drawTrip2Mileage();
+            break;
+        };
+        _update_display = false;
+        return true;
     }
     return false;
 }
@@ -56,10 +56,10 @@ bool MotoPanel::loopUpdate()
 void MotoPanel::setSpeed(int spd)
 {
     if (spd == _last_speed)
-	return;
+        return;
     _last_speed = spd;
     if (_mode == NORMAL)
-	_update_display = true;
+        _update_display = true;
 }
 
 void MotoPanel::drawSpeed()
@@ -70,46 +70,46 @@ void MotoPanel::drawSpeed()
     _display.print(_last_speed, DEC);
 }
 
-void MotoPanel::setMileage(int mileage)
+void MotoPanel::setMileage(unsigned long mileage)
 {
     if (_last_mileage == mileage)
-	return;
+        return;
     _last_mileage = mileage;
     if (_mode == NORMAL)
-	_update_display = true;
+        _update_display = true;
 }
 
-void MotoPanel::setTrip1Mileage(int mileage)
+void MotoPanel::setTrip1Mileage(unsigned long mileage)
 {
     if (_trip1_mileage == mileage)
-	return;
+        return;
     _trip1_mileage = mileage;
     if (_mode == SECONDARY)
-	_update_display = true;
+        _update_display = true;
 }
 
-void MotoPanel::setTrip2Mileage(int mileage)
+void MotoPanel::setTrip2Mileage(unsigned long mileage)
 {
     if (_trip2_mileage == mileage)
-	return;
+        return;
     _trip2_mileage = mileage;
     if (_mode == SECONDARY)
-	_update_display = true;
+        _update_display = true;
 }
 
-void MotoPanel::drawMileageCore(int mileage, int len)
+void MotoPanel::drawMileageCore(unsigned long mileage, int len)
 {
-    int tens = 1;
+    long tens = 1;
     for (int i=0; i<len; ++i)
-	tens *= 10;
+        tens *= 10;
 
-    int m = mileage;
-    int digit;
+    unsigned long m = mileage;
+    long digit;
     for (int i=0; i<len; ++i) {
-	digit = m / tens;
-	m -= digit * tens;
-	_display.print(digit, DEC);
-	tens /= 10;
+        digit = m / tens;
+        m -= digit * tens;
+        _display.print(digit, DEC);
+        tens /= 10;
     }
     _display.print(".");
     _display.print(m, DEC);
@@ -144,10 +144,10 @@ void MotoPanel::drawTrip2Mileage()
 void MotoPanel::setRPM(int rpm)
 {
     if (_last_rpm == rpm)
-	return;
+        return;
     _last_rpm = rpm;
     if (_mode == NORMAL)
-	_update_display = true;
+        _update_display = true;
 }
 
 void MotoPanel::drawRPM()
@@ -169,10 +169,10 @@ void MotoPanel::drawRPM()
 void MotoPanel::setVoltage(float v)
 {
     if (v == _last_volt)
-	return;
+        return;
     _last_volt = v;
     if (_mode == SECONDARY)
-	_update_display = true;
+        _update_display = true;
 }
 
 void MotoPanel::drawVoltage()
