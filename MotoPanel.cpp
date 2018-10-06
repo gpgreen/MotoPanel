@@ -31,9 +31,9 @@ void MotoPanel::begin(int rpm_range, unsigned long start_mileage)
     _last_mileage = start_mileage;
 }
 
-bool MotoPanel::loopUpdate()
+bool MotoPanel::loopUpdate(bool force)
 {
-    if (_update_display) {
+    if (_update_display || force) {
         _display.fillRect(0, 0, LCDWIDTH, LCDHEIGHT, WHITE);
         switch (_mode) {
         case NORMAL:

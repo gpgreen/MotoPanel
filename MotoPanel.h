@@ -31,8 +31,9 @@ public:
     void setTemp(float v);
     
     // called once each loop
+    // parameter force updates the display whether any changes or not
     // returns true if panel needs a display update, false if not
-    bool loopUpdate();
+    bool loopUpdate(bool force=false);
 
     // called when the button is pressed and released
     void buttonPressed();
