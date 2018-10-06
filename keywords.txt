@@ -1,5 +1,34 @@
+#######################################
+# Syntax Coloring Map For MotoPanel
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
 MotoPanel	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
 begin	KEYWORD2
-available	KEYWORD2
-read	KEYWORD2
-end	KEYWORD2
+setSpeed	KEYWORD2
+setMileage	KEYWORD2
+setTrip1Mileage	KEYWORD2
+setTrip2Mileage	KEYWORD2
+setRPM	KEYWORD2
+setVoltage	KEYWORD2
+setTemp	KEYWORD2
+loopUpdate	KEYWORD2
+buttonPressed	KEYWORD2
+buttonLongPressed	KEYWORD2
+
+#######################################
+# Structures (KEYWORD3)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+Mode	LITERAL1
